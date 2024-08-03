@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import net.glxn.qrgen.QRCode;
 import net.glxn.qrgen.image.ImageType;
@@ -25,10 +26,9 @@ import net.glxn.qrgen.image.ImageType;
  * @author User
  */
 public class main extends javax.swing.JFrame {
-    private boolean category = false;
+    private boolean category;
     private BufferedImage imageBarcode, imageQR;
     private ByteArrayOutputStream qr;
-    private FileOutputStream fOut;
     private String nameFile;
 
     /**
@@ -53,9 +53,11 @@ public class main extends javax.swing.JFrame {
         qrCode = new javax.swing.JButton();
         preview = new javax.swing.JLabel();
         print = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Generator Barcode and QR Code");
+        setResizable(false);
 
         jLabel1.setText("Generate code");
 
@@ -83,14 +85,22 @@ public class main extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Category");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(print)
                     .addGroup(layout.createSequentialGroup()
@@ -111,7 +121,8 @@ public class main extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(barcode)
-                    .addComponent(qrCode))
+                    .addComponent(qrCode)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(preview, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -126,10 +137,10 @@ public class main extends javax.swing.JFrame {
     private void barcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barcodeActionPerformed
         category = true;
         try {
-            Linear barcode = new Linear();
-            barcode.setType(Linear.CODE128);
-            barcode.setData(generate.getText());
-            imageBarcode = barcode.renderBarcode();
+            Linear bc = new Linear();
+            bc.setType(Linear.CODE128);
+            bc.setData(generate.getText());
+            imageBarcode = bc.renderBarcode();
             preview.setIcon(new ImageIcon(imageBarcode));
             nameFile = generate.getText();
         } catch (Exception e) {
@@ -158,23 +169,35 @@ public class main extends javax.swing.JFrame {
     private void printActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printActionPerformed
         if (generate.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Fill in the generate code first then select category.");
-        } else if (preview.getIcon() == null){
+        } else if (preview.getIcon() == null) {
             JOptionPane.showMessageDialog(null, "Please select category.");
         } else {
             if (category) {
                 try {
-                    ImageIO.write(imageBarcode, "png", new File("C:\\Users\\User\\Downloads\\" + nameFile + " barcode.png"));
-                    JOptionPane.showMessageDialog(null, "Print barcode successed.");
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int returnValue = fileChooser.showOpenDialog(null);
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        ImageIO.write(imageBarcode, "png", new File(selectedFile + nameFile + " barcode.png"));
+                        JOptionPane.showMessageDialog(null, "Print barcode successed.");
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(null, ex);
                 }
             } else {
                 try {
-                    fOut = new FileOutputStream(new File("C:\\Users\\User\\Downloads\\" + nameFile + " QR code.png"));
-                    fOut.write(qr.toByteArray());
-                    fOut.flush();
-                    JOptionPane.showMessageDialog(null, "Print QR code successed.");
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int returnValue = fileChooser.showOpenDialog(null);
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        FileOutputStream fOut = new FileOutputStream(new File(selectedFile + nameFile + " QR code.png"));
+                        fOut.write(qr.toByteArray());
+                        fOut.flush();
+                        JOptionPane.showMessageDialog(null, "Print QR code successed.");
+                    }
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(null, ex);
@@ -224,6 +247,7 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JButton barcode;
     private javax.swing.JTextField generate;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel preview;
     private javax.swing.JButton print;
     private javax.swing.JButton qrCode;
