@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="Generator_Barcode_and_QR_Code" default="default" basedir=".">
-    <description>Builds, tests, and runs the project Generator Barcode and QR Code.</description>
+<project name="E41231238_Naraya_Albani" default="default" basedir=".">
+    <description>Builds, tests, and runs the project E41231238_Naraya Albani.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -58,7 +58,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="Generator_Barcode_and_QR_Code-impl.jar">
+        <target name="run" depends="E41231238_Naraya_Albani-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>

@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package src;
 
 import com.barcodelib.barcode.Linear;
 import java.awt.image.BufferedImage;
@@ -16,8 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import jnafilechooser.api.JnaFileChooser;
 import net.glxn.qrgen.QRCode;
 import net.glxn.qrgen.image.ImageType;
 
@@ -26,6 +25,7 @@ import net.glxn.qrgen.image.ImageType;
  * @author User
  */
 public class main extends javax.swing.JFrame {
+
     private boolean category;
     private BufferedImage imageBarcode, imageQR;
     private ByteArrayOutputStream qr;
@@ -137,10 +137,10 @@ public class main extends javax.swing.JFrame {
     private void barcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barcodeActionPerformed
         category = true;
         try {
-            Linear bc = new Linear();
-            bc.setType(Linear.CODE128);
-            bc.setData(generate.getText());
-            imageBarcode = bc.renderBarcode();
+            Linear linear = new Linear();
+            linear.setType(Linear.CODE128);
+            linear.setData(generate.getText());
+            imageBarcode = linear.renderBarcode();
             preview.setIcon(new ImageIcon(imageBarcode));
             nameFile = generate.getText();
         } catch (Exception e) {
@@ -174,10 +174,10 @@ public class main extends javax.swing.JFrame {
         } else {
             if (category) {
                 try {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    int returnValue = fileChooser.showOpenDialog(null);
-                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    JnaFileChooser fileChooser = new JnaFileChooser();
+                    fileChooser.setMode(JnaFileChooser.Mode.Directories);
+                    boolean returnValue = fileChooser.showSaveDialog(this);
+                    if (returnValue) {
                         File selectedFile = fileChooser.getSelectedFile();
                         ImageIO.write(imageBarcode, "png", new File(selectedFile + nameFile + " barcode.png"));
                         JOptionPane.showMessageDialog(null, "Print barcode successed.");
@@ -188,10 +188,10 @@ public class main extends javax.swing.JFrame {
                 }
             } else {
                 try {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    int returnValue = fileChooser.showOpenDialog(null);
-                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    JnaFileChooser fileChooser = new JnaFileChooser();
+                    fileChooser.setMode(JnaFileChooser.Mode.Directories);
+                    boolean returnValue = fileChooser.showSaveDialog(this);
+                    if (returnValue) {
                         File selectedFile = fileChooser.getSelectedFile();
                         FileOutputStream fOut = new FileOutputStream(new File(selectedFile + nameFile + " QR code.png"));
                         fOut.write(qr.toByteArray());
